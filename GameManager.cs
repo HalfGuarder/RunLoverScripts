@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
 
         AudioManager.instance.StopBgm();
 
-        keyManager.SuccessOnce = 0;
+        keyManager.successOnce = 0;
 
         StartCoroutine("GameStartRoutine");
     }

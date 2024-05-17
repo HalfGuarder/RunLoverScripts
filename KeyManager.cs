@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public class KeyManager : MonoBehaviour
     public static bool isGameEndSnorkel;
     public static bool isGameEndTube;
 
-    public int SuccessOnce = 0;
+    public int successOnce = 0;
 
     public GameManager gameManager;
 
@@ -21,18 +22,23 @@ public class KeyManager : MonoBehaviour
 
     void Update()
     {
+        MissionSuccessCheck();
+    }
+
+    void MissionSuccessCheck()
+    {
+        if(successOnce == 1)
+        {
+            return;
+        }
+
         if(isGameEndSnorkel)
         {
             if(isGameEndTube)
             {
-                if(SuccessOnce > 1)
-                {
-                    return;
-                }
+                successOnce += 1;
 
-                SuccessOnce += 1;
-
-                if(SuccessOnce == 1)
+                if(successOnce == 1)
                 {
                     gameManager.MissionSuccess();
                 }
