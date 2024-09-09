@@ -12,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
  
     public float speed = 500f;
 
-    public float rayPower;
+    public float rayPower = 1.8f;
 
-    public float jumpForce = 60;
+    public float jumpForce = 58f;
     bool isGrounded;
     int numberOfJumps = 0;
     public Transform groundCheck;
@@ -66,43 +66,38 @@ public class PlayerMovement : MonoBehaviour
         {
             anim.SetBool("isJumping", true);
         }
-        if(playerRB.velocity.y < 0f)
+            
+        rayHit = Physics2D.Raycast(playerRB.position, Vector3.down, rayPower, LayerMask.GetMask("Ground"));
+        if(rayHit.collider != null)
         {
-            Debug.DrawRay(playerRB.position, Vector3.down * 4f, new Color(0, 1, 0));
-            /*RaycastHit2D*/ rayHit = Physics2D.Raycast(playerRB.position, Vector3.down, rayPower, LayerMask.GetMask("Ground"));
-            if(rayHit.collider != null)
-            {
-                //Debug.Log(rayHit.collider.name);
-                anim.SetBool("isJumping", false);
-                numberOfJumps = 0;           
-            }
-            else if(rayHit.collider == null)
-            {
+            anim.SetBool("isJumping", false);
+            Debug.DrawRay(playerRB.position, Vector3.down * 1.8f, new Color(1, 0, 0));
+            isGrounded = true; 
+        }
+        else if(rayHit.collider == null)
+        {
             anim.SetBool("isJumping", true);
-            }
+            Debug.DrawRay(playerRB.position, Vector3.down * 1.8f, new Color(0, 1, 0));
+            isGrounded = false;
         }
     }
 
     void Jump()
     {
-        if(rayHit.collider != null)
+        if(rayHit.collider != null && isGrounded)
         {
-            Debug.Log($"numberOfJumps={numberOfJumps}");
-            Debug.Log("Jump:0");
-            playerRB.velocity = new Vector2(playerRB.velocity.x, (jumpForce - (6 * numberOfJumps)));
-            numberOfJumps++;
+            playerRB.velocity = new Vector2(playerRB.velocity.x, (jumpForce));
+            numberOfJumps = 1;
             Debug.Log($"numberOfJumps={numberOfJumps}");
             Debug.Log("Jump:0");
 
             AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump);
         }
-        else if(rayHit.collider == null)
+        else if(rayHit.collider == null && !isGrounded)
         {
             if(numberOfJumps == 1)
             {
-                Debug.Log($"numberOfJumps={numberOfJumps}");
-                Debug.Log("Jump:1");
-                playerRB.velocity = new Vector2(playerRB.velocity.x, (jumpForce - (6 * numberOfJumps)));
+                playerRB.velocity = new Vector2(playerRB.velocity.x, (jumpForce - (20 * numberOfJumps)));
                 numberOfJumps++;
                 Debug.Log($"numberOfJumps={numberOfJumps}");
                 Debug.Log("Jump:1");
@@ -117,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
+                Debug.Log("InElse.");
                 return;
             }
         }
